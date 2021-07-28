@@ -71,7 +71,7 @@ def add_edge(graph=object, nodes={}, targets={}, through="", relation_type="", t
     else:
       print("No Edge Matched")
 
-
+# Ex: Repetition
 def add_att_count_to_nodes(source={}, target={}, att_name="count", through="", init=0):
   for elem in target.values():
     elem[att_name] = init
