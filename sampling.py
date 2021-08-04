@@ -55,24 +55,22 @@ class OAG_SAMPLES:
 
   def filter_main_file(self):
     file_name = "Papers_CS_20190919.tsv"
-    main_file_path = self.input_dir + file_name
-    current_full_data = load_filter_by_time(file_path=main_file_path, time_key="PublishYear", time=self.time, max_size=self.max_size)
-    current_full_data.to_csv(self.output_dir + file_name, index=False, sep="\t")
-    self.main_file_path = self.output_dir + file_name
+    current_full_data = load_filter_by_time(file_path=self.input_dir + file_name, time_key="PublishYear", time=self.time, max_size=self.max_size)
+    current_full_data.to_csv(self.output_dir + file_name + ".gz", index=False, sep="\t", compression='gzip')
 
   def filter_pa_file(self):
     # ['PaperId', 'Abstract']
     file_name = "PAb_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     data = merge_csvfiles(f1=main_file_path, f2=file_path, merge_on="PaperId")
-    data.loc[:, ['PaperId', 'Abstract']].to_csv(self.output_dir + file_name, index=False, sep="\t")
+    data.loc[:, ['PaperId', 'Abstract']].to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
 
   def filter_pf_file(self):
     # ['PaperId', 'FieldOfStudyId']
     file_name = "PF_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     data = merge_csvfiles(f1=main_file_path, f2=file_path, merge_on="PaperId")
-    data.loc[:, ['PaperId', 'FieldOfStudyId']].to_csv(self.output_dir + file_name, index=False, sep="\t")
+    data.loc[:, ['PaperId', 'FieldOfStudyId']].to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
 
   def filter_fh_file(self):
     ffl = {}
@@ -84,37 +82,35 @@ class OAG_SAMPLES:
     file_path = self.input_dir + file_name
     df = pd.read_csv(file_path, sep="\t")
     df = df[(df["ChildFosId"].isin(ffl) & df["ParentFosId"].isin(ffl))]
-    df.to_csv(self.output_dir + file_name, index=False, sep="\t")
+    df.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
 
   def filter_pr_file(self):
     # ['PaperId', 'ReferenceId']
     file_name = "PR_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     data = merge_csvfiles(f1=main_file_path, f2=file_path, merge_on="PaperId")
-    data.loc[:, ['PaperId', 'ReferenceId']].to_csv(self.output_dir + file_name, index=False, sep="\t")
+    data.loc[:, ['PaperId', 'ReferenceId']].to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
 
   def filter_PAuAf_file(self):
     # ['PaperSeqid', 'AuthorSeqid', 'AffiliationSeqid', 'AuthorSequenceNumber']
     file_name = "PAuAf_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     data = filter_csv_by_att_from_another_csv(f1=file_path, f2=main_file_path, sep="\t", f1_on="PaperId", f2_on="PaperSeqid")
-    data.to_csv(self.output_dir + file_name, index=False, sep="\t")
+    data.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
   
   def filter_vfi_file(self):
     # Todo: Find a way to filter this file
     file_name = "vfi_vector.tsv"
     file_path = self.input_dir + file_name
     df = pd.read_csv(file_path, sep="\t")
-    df.to_csv(self.output_dir + file_name, index=False, sep="\t")
+    df.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
 
   def filter_seq_file(self):
     # Todo: Find a way to filter this file
     file_name = "SeqName_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     df = pd.read_csv(file_path, sep="\t")
-    df.to_csv(self.output_dir + file_name, index=False, sep="\t")
-
-
+    df.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
 
 class REDDIT_SAMPLES:
   def __init__(self):
