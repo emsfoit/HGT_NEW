@@ -107,8 +107,7 @@ class OAG_SAMPLES:
 
 # filter_main_file()
 # filter_pa_file()
-OAG_SAMPLES().run(()
-filter_PAuAf_file()
+OAG_SAMPLES().run()
 
 
 # !not useed
