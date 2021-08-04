@@ -50,6 +50,8 @@ class OAG_SAMPLES:
     self.filter_fh_file()
     self.filter_pr_file()
     self.filter_PAuAf_file()
+    self.filter_vfi_file
+    self.filter_seq_file
 
 
   def filter_main_file(self):
@@ -103,6 +105,20 @@ class OAG_SAMPLES:
     file_path = input_dir + file_name
     data = filter_csv_by_att_from_another_csv(f1=file_path, f2=main_file_path, sep="\t", f1_on="PaperId", f2_on="PaperSeqid")
     data.to_csv(output_dir + file_name, index=False, sep="\t")
+  
+  def filter_vfi_file(self):
+    # Todo: Find a way to filter this file
+    file_name = "vfi_vector.tsv"
+    file_path = input_dir + file_name
+    df = pd.read_csv(file_path, sep="\t")
+    df.to_csv(output_dir + file_name, index=False, sep="\t")
+
+  def filter_seq_file(self):
+    # Todo: Find a way to filter this file
+    file_name = "SeqName_CS_20190919.tsv"
+    file_path = input_dir + file_name
+    df = pd.read_csv(file_path, sep="\t")
+    df.to_csv(output_dir + file_name, index=False, sep="\t")
 
 OAG_SAMPLES().run()
 
@@ -114,9 +130,6 @@ OAG_SAMPLES().run()
 # author  5985759
 
 # SeqName_CS_20190919.tsv
-# if node_id in graph.node_forward[node_type]: !!!
-# 465895  eureka  journal
-
 
 # is it useful?
 def merge_dataframes(df1=None, df2=None, merge_on=""):
