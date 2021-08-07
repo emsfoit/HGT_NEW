@@ -34,14 +34,15 @@ def filter_csv_by_att_from_another_csv(f1, f2, sep="\t", f2_on="", f1_on=""):
   return result
 
 class OAG_SAMPLES:
-  def __init__(self):
-    # Take as params
-    self.time = [{'max_time': 2015}, {'min_time': 2014, 'max_time': 2017}, {'min_time': 2016}]
-    self.max_size = 10000
-    self.input_dir = "OAG/data/oag_raw/"
-    self.output_dir = "OAG/data/oag_raw/dummy/"
+  def __init__(self, time= [{'max_time': 2015}, {'min_time': 2014, 'max_time': 2017}, {'min_time': 2016}],
+                max_size = 10000, input_dir = "OAG/data/oag_raw/",
+                output_dir = "OAG/data/oag_raw/dummy/", compress=True):
+    self.time = time
+    self.max_size = max_size
+    self.input_dir = input_dir
+    self.output_dir = output_dir
     self.main_file_path = self.output_dir + "Papers_CS_20190919.tsv"
-
+    self.compress = compress
   def run(self):
     self.filter_main_file()
     self.filter_pa_file()
@@ -56,21 +57,29 @@ class OAG_SAMPLES:
   def filter_main_file(self):
     file_name = "Papers_CS_20190919.tsv"
     current_full_data = load_filter_by_time(file_path=self.input_dir + file_name, time_key="PublishYear", time=self.time, max_size=self.max_size)
-    current_full_data.to_csv(self.output_dir + file_name + ".gz", index=False, sep="\t", compression='gzip')
-
+    if self.compress:
+      current_full_data.to_csv(self.output_dir + file_name + ".gz", index=False, sep="\t", compression='gzip')
+    else:
+      current_full_data.to_csv(self.output_dir + file_name, index=False, sep="\t")
   def filter_pa_file(self):
     # ['PaperId', 'Abstract']
     file_name = "PAb_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     data = merge_csvfiles(f1=self.main_file_path, f2=file_path, merge_on="PaperId")
-    data.loc[:, ['PaperId', 'Abstract']].to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    if self.compress:
+      data.loc[:, ['PaperId', 'Abstract']].to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    else:
+      data.loc[:, ['PaperId', 'Abstract']].to_csv(self.output_dir + file_name, index=False, sep="\t")
 
   def filter_pf_file(self):
     # ['PaperId', 'FieldOfStudyId']
     file_name = "PF_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     data = merge_csvfiles(f1=self.main_file_path, f2=file_path, merge_on="PaperId")
-    data.loc[:, ['PaperId', 'FieldOfStudyId']].to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    if self.compress:
+      data.loc[:, ['PaperId', 'FieldOfStudyId']].to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    else:
+      data.loc[:, ['PaperId', 'FieldOfStudyId']].to_csv(self.output_dir + file_name, index=False, sep="\t")
 
   def filter_fh_file(self):
     ffl = {}
@@ -82,41 +91,59 @@ class OAG_SAMPLES:
     file_path = self.input_dir + file_name
     df = pd.read_csv(file_path, sep="\t")
     df = df[(df["ChildFosId"].isin(ffl) & df["ParentFosId"].isin(ffl))]
-    df.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    if self.compress:
+      df.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    else:
+      df.to_csv(self.output_dir + file_name, index=False, sep="\t")
+
 
   def filter_pr_file(self):
     # ['PaperId', 'ReferenceId']
     file_name = "PR_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     data = merge_csvfiles(f1=self.main_file_path, f2=file_path, merge_on="PaperId")
-    data.loc[:, ['PaperId', 'ReferenceId']].to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    if self.compress:
+      data.loc[:, ['PaperId', 'ReferenceId']].to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    else:
+      data.loc[:, ['PaperId', 'ReferenceId']].to_csv(self.output_dir + file_name, index=False, sep="\t")
 
   def filter_PAuAf_file(self):
     # ['PaperSeqid', 'AuthorSeqid', 'AffiliationSeqid', 'AuthorSequenceNumber']
     file_name = "PAuAf_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     data = filter_csv_by_att_from_another_csv(f1=file_path, f2=self.main_file_path, sep="\t", f1_on="PaperId", f2_on="PaperSeqid")
-    data.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    if self.compress:
+      data.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    else:
+      data.loc[:, ['PaperId', 'ReferenceId']].to_csv(self.output_dir + file_name, index=False, sep="\t")
   
   def filter_vfi_file(self):
     # Todo: Find a way to filter this file
     file_name = "vfi_vector.tsv"
     file_path = self.input_dir + file_name
     df = pd.read_csv(file_path, sep="\t")
-    df.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    if self.compress:
+      df.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    else:
+      df.to_csv(self.output_dir + file_name, index=False, sep="\t")
+      
 
   def filter_seq_file(self):
     # Todo: Find a way to filter this file
     file_name = "SeqName_CS_20190919.tsv"
     file_path = self.input_dir + file_name
     df = pd.read_csv(file_path, sep="\t")
-    df.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
-
+    if self.compress:
+      df.to_csv(self.output_dir + file_name+".gz", index=False, sep="\t", compression='gzip')
+    else:
+      df.to_csv(self.output_dir + file_name, index=False, sep="\t")
 class REDDIT_SAMPLES:
-  def __init__(self):
-    self.max_size = 10000
-    self.input_dir = "OAG/data/reddit_raw/"
-    self.output_dir = "OAG/data/reddit_raw/dummy/"
+  def __init__(self, max_size=10000, input_dir="OAG/data/reddit_raw/", output_dir = "OAG/data/reddit_raw/dummy/", compress=False):
+    # number of records parsed taken
+    self.max_size = max_size
+    self.input_dir = input_dir
+    self.output_dir = output_dir
+    self.compress = compress
 
   def run(self):
     posts = self.filter_posts()
@@ -149,7 +176,10 @@ class REDDIT_SAMPLES:
       posts_df = pd.DataFrame(posts_data, columns=[
                         'post_id', 'post_title', 'post_created_utc', 'author', 'subreddit_id', 'subreddit'])
     posts_df = posts_df.replace({';': ''}, regex=True)
-    posts_df.to_csv(self.output_dir+"RS_2011-01.csv", sep=";", index=False)
+    if self.compress:
+      posts_df.to_csv(self.output_dir+file_name, sep=";", index=False, compression="gzip")
+    else:
+      posts_df.to_csv(self.output_dir+"RS_2011-01.csv", sep=";", index=False)
     return posts_df
 
   def filter_comments(self, posts):
@@ -166,7 +196,6 @@ class REDDIT_SAMPLES:
             comment_created_utc = comment.get('created_utc', '')
             parent_id = comment.get('parent_id', '')
             author = comment.get('author', '')
-
             if (comment_id == '' or comment_body == '' or comment_created_utc == '' or parent_id == '' or author == ''):
                 continue
             comments_data.append(
@@ -189,15 +218,16 @@ class REDDIT_SAMPLES:
     comments_df['comment_parent_id'] = comments_df[comments_df['parent_id'].str.contains(
         't1_')]['parent_id']
     comments_df = comments_df.drop(columns=['parent_id'])
-
     # remove ";" from the data to use it as a separator in the output file
     comments_df = comments_df.replace({';': ''}, regex=True)
-    comments_df.to_csv(self.output_dir+file_name, sep=";", index=False)
-
+    if self.compress:
+      comments_df.to_csv(self.output_dir+file_name, sep=";", index=False, compression="gzip")
+    else:
+      comments_df.to_csv(self.output_dir+"RC_2011-01.csv", sep=";", index=False)
 
 
 # OAG_SAMPLES().run()
-REDDIT_SAMPLES().run()
+REDDIT_SAMPLES(compress=True).run()
 
 
 
@@ -207,10 +237,3 @@ REDDIT_SAMPLES().run()
 # !not used
 # Stats_CS_20190919.tsv
 # author  5985759
-
-# SeqName_CS_20190919.tsv
-
-# is it useful?
-def merge_dataframes(df1=None, df2=None, merge_on=""):
-  df = df1.merge(df2, how="inner", on=merge_on)
-  return df
